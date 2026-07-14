@@ -1,6 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#f5fbff",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
@@ -11,11 +16,12 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(origin),
     title: "십 묶음 택배 터미널",
     description: "초등 1~2학년이 십 묶음과 낱개로 0부터 100까지의 수를 익히는 교육용 웹앱",
+    icons: { icon: "/icon.png" },
     openGraph: {
       title: "십 묶음 택배 터미널",
       description: "10개를 묶고 풀며 전체 수가 그대로인지 확인해요.",
       type: "website",
-      images: [{ url: `${origin}/og.png`, width: 1731, height: 909, alt: "낱개 10개와 십 묶음 1개가 같은 수임을 보여 주는 십 묶음 택배 터미널" }],
+      images: [{ url: `${origin}/og.png`, width: 1200, height: 628, alt: "작은 택배 상자를 십 묶음으로 정리하며 수를 배우는 십 묶음 택배 터미널" }],
     },
     twitter: { card: "summary_large_image", images: [`${origin}/og.png`] },
   };

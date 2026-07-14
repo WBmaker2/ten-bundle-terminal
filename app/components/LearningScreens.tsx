@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { canBundle, canUnbundle, calculateTotal } from "../lib/math";
 import type { SessionAction, SessionState } from "../lib/session";
 import type { Mission } from "../lib/types";
@@ -11,20 +12,40 @@ export function StartScreen({ onStart }: { readonly onStart: () => void }) {
     <main className="screen start-screen">
       <section className="hero-card">
         <div className="hero-copy">
-          <p className="eyebrow">오늘의 배송 규칙</p>
-          <h1>십 묶음 택배 터미널</h1>
+          <p className="eyebrow">오늘의 수학 배송</p>
+          <h1 className="hero-title" aria-label="십 묶음 택배 터미널">
+            <span aria-hidden="true">십 묶음</span>
+            <span aria-hidden="true">택배 터미널</span>
+          </h1>
           <p className="hero-lead"><strong>10개가 모이면 십 묶음 1개</strong>가 돼요.</p>
           <p>택배를 묶거나 풀어도 모두 몇 개인지는 그대로인지 확인해 보세요.</p>
           <button type="button" className="primary-button large" onClick={onStart}>연습 시작</button>
         </div>
-        <div className="hero-demo" role="img" aria-label="낱개 10개와 십 묶음 1개가 같습니다.">
-          <div className="mini-loose" aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <span key={index} />)}</div>
-          <span className="equals" aria-hidden="true">=</span>
-          <div className="mini-bundle" aria-hidden="true"><strong>10</strong><span>십 묶음</span></div>
-        </div>
+        <figure className="hero-visual">
+          <Image
+            className="hero-art"
+            src="/images/parcel-terminal-hero-v1.jpg"
+            width="1400"
+            height="768"
+            alt=""
+            priority
+            sizes="(max-width: 900px) calc(100vw - 60px), 52vw"
+            unoptimized
+          />
+          <figcaption className="hero-demo" role="img" aria-label="낱개 10개와 십 묶음 1개가 같습니다.">
+            <div className="demo-group" aria-hidden="true">
+              <div className="mini-loose">{Array.from({ length: 10 }, (_, index) => <span key={index} />)}</div>
+              <strong>낱개 10개</strong>
+            </div>
+            <span className="equals" aria-hidden="true">=</span>
+            <div className="mini-bundle" aria-hidden="true"><strong>10</strong><span>십 묶음 1개</span></div>
+          </figcaption>
+        </figure>
       </section>
       <div className="trust-row" aria-label="앱 안내">
-        <span>고정 9개 미션</span><span>점수 없음</span><span>학생 정보 저장 안 함</span>
+        <span><b aria-hidden="true">🧭</b> 고정 9개 미션</span>
+        <span><b aria-hidden="true">🌱</b> 점수 없이 차근차근</span>
+        <span><b aria-hidden="true">🔒</b> 학생 정보 저장 안 함</span>
       </div>
     </main>
   );

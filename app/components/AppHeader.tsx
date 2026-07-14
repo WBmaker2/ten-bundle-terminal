@@ -15,7 +15,7 @@ export function AppHeader({ missionNumber, onOpenUpdates, onOpenReset }: AppHead
   return (
     <header className="app-header">
       <div className="brand-block">
-        <span className="brand-mark" aria-hidden="true">10</span>
+        <span className="brand-mark" aria-hidden="true"><span>10</span></span>
         <div>
           <p className="eyebrow">수학 배송 학습소</p>
           <p className="brand-name">십 묶음 택배 터미널</p>

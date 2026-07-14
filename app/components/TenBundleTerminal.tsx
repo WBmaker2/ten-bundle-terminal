@@ -67,6 +67,10 @@ export function TenBundleTerminal() {
         <AccessibleDialog title="업데이트 내역" onClose={closeUpdates}>
           <ol className="changelog-list">
             <li>
+              <div><strong>v1.1.0</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
+              <p>밝은 택배 터미널 삽화와 색상 체계, 택배 상자 모형, 화면별 카드 구성을 개선했습니다.</p>
+            </li>
+            <li>
               <div><strong>v1.0.0</strong><time dateTime="2026-07-14">2026. 7. 14.</time></div>
               <p>첫 공개: 십 묶음·낱개 버튼 조작, 0~100 고정 미션, 배송 수량표 학습을 추가했습니다.</p>
             </li>
