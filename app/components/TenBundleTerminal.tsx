@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { missions, validateMissionBank } from "../lib/missions";
+import { APP_VERSION, releaseNotes } from "../lib/release";
 import { initialSession, sessionReducer } from "../lib/session";
 import { AccessibleDialog } from "./AccessibleDialog";
 import { AppHeader } from "./AppHeader";
@@ -24,7 +25,16 @@ export function TenBundleTerminal() {
     dispatch({ type: "CLOSE_RESET" });
     restoreTriggerFocus();
   }, [restoreTriggerFocus]);
-  const missionNumber = state.view === "mission" ? state.missionIndex + 1 : state.view === "summary" ? 9 : null;
+  const closeMissionReset = useCallback(() => {
+    dispatch({ type: "CLOSE_MISSION_RESET" });
+    restoreTriggerFocus();
+  }, [restoreTriggerFocus]);
+  const closeTeacherGuide = useCallback(() => {
+    dispatch({ type: "CLOSE_TEACHER_GUIDE" });
+    restoreTriggerFocus();
+  }, [restoreTriggerFocus]);
+  const currentMission = state.view === "mission" ? state.missionIndex + 1 : null;
+  const hasProgress = state.view !== "start";
 
   useEffect(() => {
     if (shellRef.current) shellRef.current.dataset.hydrated = "true";
@@ -51,13 +61,24 @@ export function TenBundleTerminal() {
   return (
     <div ref={shellRef} className="app-shell" data-hydrated="false">
       <AppHeader
-        missionNumber={missionNumber}
+        currentMission={currentMission}
+        completedCount={state.completed.length}
+        totalMissions={missions.length}
+        hasProgress={hasProgress}
         onOpenUpdates={(button) => { returnFocusRef.current = button; dispatch({ type: "OPEN_UPDATES" }); }}
         onOpenReset={(button) => { returnFocusRef.current = button; dispatch({ type: "OPEN_RESET" }); }}
       />
-      {state.view === "start" && <StartScreen onStart={() => dispatch({ type: "START_TUTORIAL" })} />}
+      {state.view === "start" && <StartScreen
+        onStart={() => dispatch({ type: "START_TUTORIAL" })}
+        onOpenTeacherGuide={(button) => { returnFocusRef.current = button; dispatch({ type: "OPEN_TEACHER_GUIDE" }); }}
+      />}
       {state.view === "tutorial" && <TutorialScreen step={state.tutorialStep} dispatch={dispatch} />}
-      {state.view === "mission" && <MissionScreen state={state} mission={missions[state.missionIndex]} dispatch={dispatch} />}
+      {state.view === "mission" && <MissionScreen
+        state={state}
+        mission={missions[state.missionIndex]}
+        dispatch={dispatch}
+        onRequestMissionReset={(button) => { returnFocusRef.current = button; dispatch({ type: "OPEN_MISSION_RESET" }); }}
+      />}
       {state.view === "summary" && <SummaryScreen state={state} dispatch={dispatch} onOpenReset={(button) => {
         returnFocusRef.current = button;
         dispatch({ type: "OPEN_RESET" });
@@ -66,24 +87,37 @@ export function TenBundleTerminal() {
       {state.updateHistoryOpen && (
         <AccessibleDialog title="업데이트 내역" onClose={closeUpdates}>
           <ol className="changelog-list">
-            <li>
-              <div><strong>v1.2.0</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
-              <p>파스텔 종이 공예형 색상, 귀여운 상자 로고와 배지, 학습 여정 안내, 카드·버튼·완료 화면을 밝고 친근하게 개선했습니다.</p>
-            </li>
-            <li>
-              <div><strong>v1.1.1</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
-              <p>3/9를 포함한 묶기·풀기 미션에 지금 할 일과 단계별 순서를 표시하고, 탐색 뒤에도 올바른 마지막 순서로 통과하도록 개선했습니다.</p>
-            </li>
-            <li>
-              <div><strong>v1.1.0</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
-              <p>밝은 택배 터미널 삽화와 색상 체계, 택배 상자 모형, 화면별 카드 구성을 개선했습니다.</p>
-            </li>
-            <li>
-              <div><strong>v1.0.0</strong><time dateTime="2026-07-14">2026. 7. 14.</time></div>
-              <p>첫 공개: 십 묶음·낱개 버튼 조작, 0~100 고정 미션, 배송 수량표 학습을 추가했습니다.</p>
-            </li>
+            {releaseNotes.map((note) => (
+              <li key={note.version}>
+                <div><strong>v{note.version}</strong><time dateTime={note.date}>{note.displayDate}</time></div>
+                <p>{note.summary}</p>
+              </li>
+            ))}
           </ol>
+          <p className="current-version">현재 버전 v{APP_VERSION}</p>
           <button type="button" className="primary-button" onClick={closeUpdates}>확인</button>
+        </AccessibleDialog>
+      )}
+
+      {state.teacherGuideOpen && (
+        <AccessibleDialog title="교사용 활동 안내" onClose={closeTeacherGuide}>
+          <div className="teacher-guide-content">
+            <p><strong>예상 시간</strong><span>10~15분</span></p>
+            <p><strong>핵심 질문</strong><span>“모양이 바뀌었는데 모두 몇 개인지는 왜 그대로일까요?”</span></p>
+            <p><strong>관찰할 점</strong><span>학생이 십 묶음 수에 10을 곱하고 낱개를 더해 말하는지 살펴보세요.</span></p>
+            <p><strong>수업 범위</strong><span>0~100의 수와 십 묶음·낱개 관계만 다루며 점수와 학생 기록은 남기지 않습니다.</span></p>
+          </div>
+          <button type="button" className="primary-button" onClick={closeTeacherGuide}>확인</button>
+        </AccessibleDialog>
+      )}
+
+      {state.missionResetDialogOpen && (
+        <AccessibleDialog title="이 미션을 다시 시작할까요?" onClose={closeMissionReset}>
+          <p>이번 미션의 택배 모습과 답만 처음으로 돌아가요. 앞에서 완료한 미션은 그대로 남습니다.</p>
+          <div className="dialog-actions">
+            <button type="button" className="secondary-button" onClick={closeMissionReset}>계속 학습하기</button>
+            <button type="button" className="mission-reset-confirm" onClick={() => dispatch({ type: "RESET_MISSION" })}>이 미션 다시 시작</button>
+          </div>
         </AccessibleDialog>
       )}
 

@@ -1,14 +1,18 @@
 "use client";
 
 import { useRef } from "react";
+import { MissionProgress } from "./MissionProgress";
 
 interface AppHeaderProps {
-  readonly missionNumber: number | null;
+  readonly currentMission: number | null;
+  readonly completedCount: number;
+  readonly totalMissions: number;
+  readonly hasProgress: boolean;
   readonly onOpenUpdates: (button: HTMLButtonElement) => void;
   readonly onOpenReset: (button: HTMLButtonElement) => void;
 }
 
-export function AppHeader({ missionNumber, onOpenUpdates, onOpenReset }: AppHeaderProps) {
+export function AppHeader({ currentMission, completedCount, totalMissions, hasProgress, onOpenUpdates, onOpenReset }: AppHeaderProps) {
   const updatesRef = useRef<HTMLButtonElement>(null);
   const resetRef = useRef<HTMLButtonElement>(null);
 
@@ -22,13 +26,17 @@ export function AppHeader({ missionNumber, onOpenUpdates, onOpenReset }: AppHead
         </div>
       </div>
       <div className="header-actions">
-        {missionNumber !== null && <span className="mission-progress" aria-label={`현재 미션 ${missionNumber}, 전체 9개`}><b aria-hidden="true">⭐</b> {missionNumber} / 9</span>}
+        {hasProgress && (
+          <MissionProgress completedCount={completedCount} currentMission={currentMission} total={totalMissions} />
+        )}
         <button ref={updatesRef} className="small-button" type="button" onClick={() => updatesRef.current && onOpenUpdates(updatesRef.current)}>
           <span aria-hidden="true">📝</span> 업데이트 내역
         </button>
-        <button ref={resetRef} className="small-button ghost" type="button" onClick={() => resetRef.current && onOpenReset(resetRef.current)}>
-          <span aria-hidden="true">🏠</span> 처음으로
-        </button>
+        {hasProgress && (
+          <button ref={resetRef} className="small-button ghost" type="button" onClick={() => resetRef.current && onOpenReset(resetRef.current)}>
+            <span aria-hidden="true">🏠</span> 처음으로
+          </button>
+        )}
       </div>
     </header>
   );

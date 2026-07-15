@@ -80,10 +80,20 @@ describe("십 묶음 택배 터미널", () => {
     expect(screen.getByText(/다시 세어/)).toBeInTheDocument();
   });
 
-  it("처음으로 버튼은 확인 대화상자를 연다", async () => {
+  it("처음 화면에서는 초기화 버튼을 숨기고 학습을 시작하면 보여 준다", async () => {
     const user = userEvent.setup();
     render(<TenBundleTerminal />);
+    expect(screen.queryByRole("button", { name: "처음으로" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "연습 시작" }));
     await user.click(screen.getByRole("button", { name: "처음으로" }));
     expect(screen.getByRole("dialog", { name: "처음부터 다시 할까요?" })).toBeInTheDocument();
+  });
+
+  it("교사용 활동 안내는 학습 시간과 핵심 질문을 보여 준다", async () => {
+    const user = userEvent.setup();
+    render(<TenBundleTerminal />);
+    await user.click(screen.getByRole("button", { name: "교사용 활동 안내" }));
+    expect(screen.getByRole("dialog", { name: "교사용 활동 안내" })).toHaveTextContent("10~15분");
+    expect(screen.getByRole("dialog", { name: "교사용 활동 안내" })).toHaveTextContent("모양이 바뀌었는데");
   });
 });

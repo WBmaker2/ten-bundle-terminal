@@ -51,4 +51,32 @@ describe("학습 세션", () => {
     expect(getRequiredActionProgress(["bundle", "unbundle"], ["unbundle", "bundle"])).toBe(1);
     expect(hasCompletedRequiredActions(["bundle", "unbundle", "bundle"], ["unbundle", "bundle"])).toBe(true);
   });
+
+  it("현재 미션 다시 시작은 이전 완료 기록을 유지한다", () => {
+    const state = {
+      ...initialSession,
+      view: "mission" as const,
+      missionIndex: 2,
+      current: { bundles: 1, loose: 0 },
+      completed: ["zero-depot", "single-nine"],
+      missionResetDialogOpen: true,
+    };
+    const reset = sessionReducer(state, { type: "RESET_MISSION" });
+    expect(reset.current).toEqual({ bundles: 0, loose: 10 });
+    expect(reset.completed).toEqual(["zero-depot", "single-nine"]);
+    expect(reset.missionResetDialogOpen).toBe(false);
+  });
+
+  it("완료한 미션 복습을 마치면 정리표로 돌아간다", () => {
+    const summary = { ...initialSession, view: "summary" as const, completed: ["zero-depot"] };
+    const replay = sessionReducer(summary, { type: "REPLAY_MISSION", missionIndex: 0 });
+    expect(replay).toMatchObject({ view: "mission", missionIndex: 0, isReplay: true });
+    const complete = { ...replay, phase: "complete" as const };
+    expect(sessionReducer(complete, { type: "NEXT_MISSION" })).toMatchObject({ view: "summary", isReplay: false });
+  });
+
+  it("보너스 연습 답은 현재 세션에만 기록한다", () => {
+    const state = sessionReducer(initialSession, { type: "ANSWER_BONUS", questionId: "bonus-30", choiceId: "3-0" });
+    expect(state.bonusAnswers["bonus-30"]).toBe("3-0");
+  });
 });

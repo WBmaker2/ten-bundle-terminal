@@ -33,3 +33,5 @@ npm run check:content
 - [전체 구현 계획](./2026-07-14%20ten-bundle-terminal.md)
 - [학습 모형](./docs/learning-model.md)
 - [교육과정 연결](./docs/curriculum-alignment.md)
+- [수동 접근성 검수표](./docs/manual-accessibility-qa.md)
+- [기능·디자인·UI 개선 분석](./2026-07-15-feature-design-ui-improvement-analysis.md)

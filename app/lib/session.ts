@@ -19,8 +19,12 @@ export interface SessionState {
   readonly feedback: string;
   readonly completed: readonly string[];
   readonly summaryAnswers: Readonly<Record<string, string>>;
+  readonly bonusAnswers: Readonly<Record<string, string>>;
+  readonly isReplay: boolean;
   readonly updateHistoryOpen: boolean;
   readonly resetDialogOpen: boolean;
+  readonly missionResetDialogOpen: boolean;
+  readonly teacherGuideOpen: boolean;
 }
 
 export const initialSession: SessionState = {
@@ -37,8 +41,12 @@ export const initialSession: SessionState = {
   feedback: "",
   completed: [],
   summaryAnswers: {},
+  bonusAnswers: {},
+  isReplay: false,
   updateHistoryOpen: false,
   resetDialogOpen: false,
+  missionResetDialogOpen: false,
+  teacherGuideOpen: false,
 };
 
 export type SessionAction =
@@ -54,15 +62,21 @@ export type SessionAction =
   | { type: "SET_SELECTION"; value: string }
   | { type: "SUBMIT_CHECK" }
   | { type: "NEXT_MISSION" }
+  | { type: "REPLAY_MISSION"; missionIndex: number }
   | { type: "RESET_MISSION" }
+  | { type: "OPEN_MISSION_RESET" }
+  | { type: "CLOSE_MISSION_RESET" }
   | { type: "ANSWER_SUMMARY"; questionId: string; choiceId: string }
+  | { type: "ANSWER_BONUS"; questionId: string; choiceId: string }
   | { type: "OPEN_UPDATES" }
   | { type: "CLOSE_UPDATES" }
+  | { type: "OPEN_TEACHER_GUIDE" }
+  | { type: "CLOSE_TEACHER_GUIDE" }
   | { type: "OPEN_RESET" }
   | { type: "CLOSE_RESET" }
   | { type: "RESTART" };
 
-function missionState(index: number): Partial<SessionState> {
+function missionState(index: number, isReplay = false): Partial<SessionState> {
   return {
     view: "mission",
     missionIndex: index,
@@ -74,6 +88,8 @@ function missionState(index: number): Partial<SessionState> {
     numericInput: "",
     selection: "",
     feedback: "",
+    isReplay,
+    missionResetDialogOpen: false,
   };
 }
 
@@ -160,14 +176,24 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
     }
     case "NEXT_MISSION":
       if (state.phase !== "complete") return state;
+      if (state.isReplay) return { ...state, view: "summary", isReplay: false, feedback: "" };
       if (state.missionIndex === missions.length - 1) return { ...state, view: "summary", feedback: "" };
       return { ...state, ...missionState(state.missionIndex + 1) };
+    case "REPLAY_MISSION":
+      if (!state.completed.includes(missions[action.missionIndex]?.id ?? "")) return state;
+      return { ...state, ...missionState(action.missionIndex, true) };
     case "RESET_MISSION":
-      return { ...state, ...missionState(state.missionIndex), resetDialogOpen: false };
+      return { ...state, ...missionState(state.missionIndex, state.isReplay) };
+    case "OPEN_MISSION_RESET": return state.view === "mission" ? { ...state, missionResetDialogOpen: true } : state;
+    case "CLOSE_MISSION_RESET": return { ...state, missionResetDialogOpen: false };
     case "ANSWER_SUMMARY":
       return { ...state, summaryAnswers: { ...state.summaryAnswers, [action.questionId]: action.choiceId } };
+    case "ANSWER_BONUS":
+      return { ...state, bonusAnswers: { ...state.bonusAnswers, [action.questionId]: action.choiceId } };
     case "OPEN_UPDATES": return { ...state, updateHistoryOpen: true };
     case "CLOSE_UPDATES": return { ...state, updateHistoryOpen: false };
+    case "OPEN_TEACHER_GUIDE": return { ...state, teacherGuideOpen: true };
+    case "CLOSE_TEACHER_GUIDE": return { ...state, teacherGuideOpen: false };
     case "OPEN_RESET": return { ...state, resetDialogOpen: true };
     case "CLOSE_RESET": return { ...state, resetDialogOpen: false };
     case "RESTART": return initialSession;
