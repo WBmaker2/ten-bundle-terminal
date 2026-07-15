@@ -25,7 +25,7 @@ export function ParcelVisual({ value, compact = false }: ParcelVisualProps) {
       <span className="sr-only">낱개 {value.loose}개</span>
       <div className="parcel-zone bundle-zone">
         <div className="zone-heading">
-          <span><b aria-hidden="true">▦</b> 십 묶음</span>
+          <span><b aria-hidden="true">🎁</b> 십 묶음</span>
           <strong>{value.bundles}개</strong>
         </div>
         <div className="bundle-shelf" aria-hidden="true">
@@ -34,7 +34,7 @@ export function ParcelVisual({ value, compact = false }: ParcelVisualProps) {
       </div>
       <div className="parcel-zone loose-zone">
         <div className="zone-heading">
-          <span><b aria-hidden="true">□</b> 낱개</span>
+          <span><b aria-hidden="true">📦</b> 낱개</span>
           <strong>{value.loose}개</strong>
         </div>
         <div className="loose-grid" aria-hidden="true">

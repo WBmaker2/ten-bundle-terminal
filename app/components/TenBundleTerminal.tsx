@@ -67,6 +67,10 @@ export function TenBundleTerminal() {
         <AccessibleDialog title="업데이트 내역" onClose={closeUpdates}>
           <ol className="changelog-list">
             <li>
+              <div><strong>v1.2.0</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
+              <p>파스텔 종이 공예형 색상, 귀여운 상자 로고와 배지, 학습 여정 안내, 카드·버튼·완료 화면을 밝고 친근하게 개선했습니다.</p>
+            </li>
+            <li>
               <div><strong>v1.1.1</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
               <p>3/9를 포함한 묶기·풀기 미션에 지금 할 일과 단계별 순서를 표시하고, 탐색 뒤에도 올바른 마지막 순서로 통과하도록 개선했습니다.</p>
             </li>

@@ -14,16 +14,22 @@ export function StartScreen({ onStart }: { readonly onStart: () => void }) {
     <main className="screen start-screen">
       <section className="hero-card">
         <div className="hero-copy">
-          <p className="eyebrow">오늘의 수학 배송</p>
+          <p className="hero-kicker"><span aria-hidden="true">📦</span> 오늘의 수학 배송 놀이</p>
           <h1 className="hero-title" aria-label="십 묶음 택배 터미널">
             <span aria-hidden="true">십 묶음</span>
             <span aria-hidden="true">택배 터미널</span>
           </h1>
           <p className="hero-lead"><strong>10개가 모이면 십 묶음 1개</strong>가 돼요.</p>
           <p>택배를 묶거나 풀어도 모두 몇 개인지는 그대로인지 확인해 보세요.</p>
-          <button type="button" className="primary-button large" onClick={onStart}>연습 시작</button>
+          <div className="learning-route" aria-label="학습 순서: 살펴보기, 묶어 보기, 배송 정리">
+            <span><b>1</b> 살펴보기</span><i aria-hidden="true">→</i>
+            <span><b>2</b> 묶어 보기</span><i aria-hidden="true">→</i>
+            <span><b>3</b> 배송 정리</span>
+          </div>
+          <button type="button" className="primary-button large" onClick={onStart}>연습 시작 <span aria-hidden="true">→</span></button>
         </div>
         <figure className="hero-visual">
+          <span className="hero-sticker" aria-hidden="true">10개가 모이면 출발!</span>
           <Image
             className="hero-art"
             src="/images/parcel-terminal-hero-v1.jpg"
@@ -45,9 +51,9 @@ export function StartScreen({ onStart }: { readonly onStart: () => void }) {
         </figure>
       </section>
       <div className="trust-row" aria-label="앱 안내">
-        <span><b aria-hidden="true">🧭</b> 고정 9개 미션</span>
-        <span><b aria-hidden="true">🌱</b> 점수 없이 차근차근</span>
-        <span><b aria-hidden="true">🔒</b> 학생 정보 저장 안 함</span>
+        <span><b aria-hidden="true">🧭</b><strong>고정 9개 미션</strong><small>길을 잃지 않아요</small></span>
+        <span><b aria-hidden="true">🌱</b><strong>점수 없이 차근차근</strong><small>내 속도로 배워요</small></span>
+        <span><b aria-hidden="true">🔒</b><strong>학생 정보 저장 안 함</strong><small>안심하고 연습해요</small></span>
       </div>
     </main>
   );

@@ -60,6 +60,7 @@ test("시작 화면은 학습 목표와 개인정보 비저장을 알린다", as
 test("업데이트 내역은 날짜와 첫 공개 내용을 보여 준다", async ({ page }) => {
   await openStart(page);
   await page.getByRole("button", { name: "업데이트 내역" }).click();
+  await expect(page.getByRole("dialog", { name: "업데이트 내역" })).toContainText("v1.2.0");
   await expect(page.getByRole("dialog", { name: "업데이트 내역" })).toContainText("2026. 7. 14.");
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: "업데이트 내역" })).toBeFocused();
