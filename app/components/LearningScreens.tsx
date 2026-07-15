@@ -4,6 +4,8 @@ import Image from "next/image";
 import { canBundle, canUnbundle, calculateTotal } from "../lib/math";
 import type { SessionAction, SessionState } from "../lib/session";
 import type { Mission } from "../lib/types";
+import { getRequiredActionProgress } from "../lib/actionGuide";
+import { ActionGuide } from "./ActionGuide";
 import { CheckPanel } from "./CheckPanel";
 import { ParcelVisual } from "./ParcelVisual";
 
@@ -116,6 +118,8 @@ export function MissionScreen({ state, mission, dispatch }: MissionScreenProps) 
   if (state.phase === "exchange") {
     const bundleDisabled = !canBundle(state.current);
     const unbundleDisabled = !canUnbundle(state.current);
+    const actionProgress = getRequiredActionProgress(state.actionHistory, mission.requiredActions);
+    const nextAction = mission.requiredActions[actionProgress];
     return (
       <main className="screen board-screen">
         <div className="board-heading">
@@ -124,9 +128,10 @@ export function MissionScreen({ state, mission, dispatch }: MissionScreenProps) 
         </div>
         <ParcelVisual value={state.current} />
         <div className="relation-sentence">십 묶음 {state.current.bundles}개는 {state.current.bundles * 10}개예요. 낱개 {state.current.loose}개를 더하면 모두 {calculateTotal(state.current)}개예요.</div>
-        <div className="exchange-controls" aria-label="택배 묶기와 풀기 조작">
-          <button type="button" onClick={() => dispatch({ type: "APPLY_EXCHANGE", action: "bundle" })} disabled={bundleDisabled}>낱개 10개 묶기</button>
-          <button type="button" onClick={() => dispatch({ type: "APPLY_EXCHANGE", action: "unbundle" })} disabled={unbundleDisabled}>십 묶음 1개 풀기</button>
+        <ActionGuide required={mission.requiredActions} history={state.actionHistory} />
+        <div className="exchange-controls" aria-label="택배 묶기와 풀기 조작" aria-describedby="action-guide-status">
+          <button type="button" className={nextAction === "bundle" ? "next-action-button" : undefined} onClick={() => dispatch({ type: "APPLY_EXCHANGE", action: "bundle" })} disabled={bundleDisabled}>낱개 10개 묶기</button>
+          <button type="button" className={nextAction === "unbundle" ? "next-action-button" : undefined} onClick={() => dispatch({ type: "APPLY_EXCHANGE", action: "unbundle" })} disabled={unbundleDisabled}>십 묶음 1개 풀기</button>
           <button type="button" className="secondary-button" onClick={() => dispatch({ type: "UNDO_EXCHANGE" })} disabled={!state.history.length}>한 단계 되돌리기</button>
         </div>
         <div className="availability-notes">

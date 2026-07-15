@@ -1,4 +1,5 @@
 import { applyExchange, undoLastOperation, validateQuantityEntry } from "./math";
+import { describeRequiredActions, exchangeActionLabels, getRequiredActionProgress, hasCompletedRequiredActions } from "./actionGuide";
 import { missions } from "./missions";
 import type { ExchangeAction, Representation } from "./types";
 
@@ -130,10 +131,15 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
     }
     case "CHECK_EXCHANGE": {
       const representationMatches = state.current.bundles === mission.goal.bundles && state.current.loose === mission.goal.loose;
-      const sequenceMatches = mission.requiredActions.every((required, index) => state.actionHistory[index] === required)
-        && state.actionHistory.length === mission.requiredActions.length;
-      if (!representationMatches) return { ...state, feedback: "목표 모습과 아직 달라요. 묶음과 낱개를 살펴보세요." };
-      if (!sequenceMatches) return { ...state, feedback: "이번 배송에서 필요한 조작 순서를 차례로 해 보세요." };
+      const actionProgress = getRequiredActionProgress(state.actionHistory, mission.requiredActions);
+      const nextAction = mission.requiredActions[actionProgress];
+      if (!representationMatches) {
+        const nextStep = nextAction ? ` 지금 할 일은 '${exchangeActionLabels[nextAction]}' 버튼 누르기예요.` : "";
+        return { ...state, feedback: `목표 모습과 아직 달라요.${nextStep}` };
+      }
+      if (!hasCompletedRequiredActions(state.actionHistory, mission.requiredActions)) {
+        return { ...state, feedback: `먼저 ${describeRequiredActions(mission.requiredActions)} 순서로 버튼을 눌러 주세요.` };
+      }
       return { ...state, phase: "check", feedback: "모양이 맞아요. 수량을 확인해 볼까요?" };
     }
     case "SET_NUMERIC":

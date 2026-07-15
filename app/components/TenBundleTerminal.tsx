@@ -67,6 +67,10 @@ export function TenBundleTerminal() {
         <AccessibleDialog title="업데이트 내역" onClose={closeUpdates}>
           <ol className="changelog-list">
             <li>
+              <div><strong>v1.1.1</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
+              <p>3/9를 포함한 묶기·풀기 미션에 지금 할 일과 단계별 순서를 표시하고, 탐색 뒤에도 올바른 마지막 순서로 통과하도록 개선했습니다.</p>
+            </li>
+            <li>
               <div><strong>v1.1.0</strong><time dateTime="2026-07-15">2026. 7. 15.</time></div>
               <p>밝은 택배 터미널 삽화와 색상 체계, 택배 상자 모형, 화면별 카드 구성을 개선했습니다.</p>
             </li>

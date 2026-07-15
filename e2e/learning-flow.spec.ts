@@ -115,6 +115,18 @@ test("10 미션은 묶기 전후 전체 10을 보존한다", async ({ page }) =>
   await expect(page.getByText(/모두 10개입니다/)).toBeVisible();
 });
 
+test("3/9 미션은 지금 할 조작을 알려 주고 탐색 뒤 올바른 마지막 묶기를 인정한다", async ({ page }) => {
+  await reachMission(page, 2);
+  await page.getByRole("button", { name: "미션 열기" }).click();
+  await expect(page.getByText("지금 할 일: 낱개 10개 묶기", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "낱개 10개 묶기" }).click();
+  await page.getByRole("button", { name: "십 묶음 1개 풀기" }).click();
+  await page.getByRole("button", { name: "낱개 10개 묶기" }).click();
+  await expect(page.getByText("순서 완료!", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "묶음 확인" }).click();
+  await expect(page.getByRole("textbox", { name: "배송 수량표" })).toBeVisible();
+});
+
 test("19 미션은 1묶음 9낱개와 십구를 연결한다", async ({ page }) => {
   await reachMission(page, 3);
   await completeMission(page, 3);

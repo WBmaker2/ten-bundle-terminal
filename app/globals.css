@@ -180,8 +180,22 @@ main h1:focus, main h2:focus { outline: none; }
 .board-heading { justify-content: space-between; gap: 20px; }
 .locked-total { padding: 10px 15px; color: var(--blue-dark); background: var(--sky); border: 1px solid #b8dceb; border-radius: 999px; font-weight: 850; white-space: nowrap; }
 .relation-sentence { margin-bottom: 17px; background: #f8fcff; border: 1px solid var(--line); font-weight: 780; }
+.action-guide { margin: 18px 0; padding: 18px; background: linear-gradient(135deg, #fff9df, var(--sky)); border: 2px solid #b8dceb; border-radius: 20px; }
+.action-guide-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.action-guide-heading .step-label { margin: 0; }
+.action-guide-heading strong { color: var(--blue-dark); font-size: 1.05rem; }
+.action-guide ol { margin: 14px 0 10px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; list-style: none; }
+.action-step { min-height: 58px; padding: 10px 12px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; background: white; border: 2px solid var(--line); border-radius: 14px; font-weight: 800; }
+.action-step.current { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(233, 120, 55, 0.14); }
+.action-step.completed { color: #185d44; background: var(--mint); border-color: #a8d8c3; }
+.action-step-number { width: 32px; height: 32px; display: grid; place-items: center; color: white; background: var(--blue); border-radius: 999px; font-weight: 950; }
+.action-step.current .action-step-number { background: var(--orange); }
+.action-step.completed .action-step-number { background: var(--green); }
+.action-step small { color: var(--ink-soft); }
+.action-guide-note { margin: 0; color: var(--ink-soft); }
 .exchange-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .exchange-controls button:not(.secondary-button) { padding: 12px; color: white; background: var(--blue); }
+.exchange-controls .next-action-button { box-shadow: 0 0 0 4px rgba(247, 169, 46, 0.5), 0 9px 20px rgba(23, 111, 158, 0.18); }
 .availability-notes { margin: 11px 0; display: flex; gap: 10px; flex-wrap: wrap; color: var(--ink-soft); font-size: 0.9rem; }
 .availability-notes span { padding: 7px 11px; background: #f6fafc; border: 1px solid #dfebf1; border-radius: 9px; }
 
@@ -252,6 +266,7 @@ main h1:focus, main h2:focus { outline: none; }
   .total-strip { grid-column: 1; flex-wrap: wrap; }
   .bundle-shelf { grid-template-columns: repeat(5, minmax(45px, 1fr)); }
   .loose-grid { grid-template-columns: repeat(10, minmax(16px, 1fr)); }
+  .action-guide-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
   .exchange-controls { grid-template-columns: 1fr; }
   .board-heading, .final-note { align-items: flex-start; flex-direction: column; }
   .completion-card { grid-template-columns: 1fr; }
