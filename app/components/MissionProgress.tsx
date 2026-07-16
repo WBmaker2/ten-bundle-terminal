@@ -5,13 +5,14 @@ interface MissionProgressProps {
 }
 
 export function MissionProgress({ completedCount, currentMission, total }: MissionProgressProps) {
-  const remainingCount = Math.max(0, total - Math.max(completedCount, currentMission ?? 0));
+  const remainingCount = Math.max(0, total - completedCount);
   const allComplete = completedCount === total;
+  const isLastMission = currentMission === total && !allComplete;
   const label = allComplete
     ? `전체 ${total}개 미션 완료`
     : currentMission === null
       ? `짧은 연습 중, 이후 전체 ${total}개 미션 시작`
-    : `전체 ${total}개 미션 중 ${completedCount}개 완료, 현재 ${currentMission}번째 미션, ${remainingCount}개 남음`;
+    : `전체 ${total}개 미션 중 ${completedCount}개 완료, 현재 ${isLastMission ? "마지막" : `${currentMission}번째`} 미션, ${remainingCount}개 남음`;
 
   return (
     <div
@@ -27,7 +28,7 @@ export function MissionProgress({ completedCount, currentMission, total }: Missi
           ? <><strong>{completedCount}개 완료</strong><small>모든 배송을 마쳤어요</small></>
           : currentMission === null
             ? <><strong>짧은 연습 중</strong><small>곧 {total}개 미션 시작</small></>
-          : <><strong>{completedCount} 완료 · {currentMission}번째</strong><small>{remainingCount}개 남음</small></>}
+          : <><strong>{completedCount} 완료 · {isLastMission ? "마지막 미션" : `${currentMission}번째`}</strong><small>{remainingCount}개 남음</small></>}
       </span>
       <span className="progress-dots" aria-hidden="true">
         {Array.from({ length: total }, (_, index) => {

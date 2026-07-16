@@ -1,6 +1,7 @@
 "use client";
 
 import type { SessionAction, SessionState } from "../lib/session";
+import { evaluateBonusAnswer } from "../lib/bonus";
 import { missions } from "../lib/missions";
 
 const questions = [
@@ -70,38 +71,43 @@ export function SummaryScreen({ state, dispatch, onOpenReset }: {
           ))}
         </div>
       </details>
-      <div className="summary-questions">
-        {questions.map((question, index) => {
-          const selected = state.summaryAnswers[question.id];
-          return (
-            <section className="summary-question" key={question.id}>
-              <p className="step-label">생각 정리 {index + 1}</p>
-              <fieldset className="choice-fieldset">
-                <legend>{question.prompt}</legend>
-                <div className="choice-list">
-                  {question.choices.map(([id, label]) => (
-                    <label key={id} className={`choice-card ${selected === id ? "selected" : ""}`}>
-                      <input type="radio" name={question.id} checked={selected === id} onChange={() => dispatch({ type: "ANSWER_SUMMARY", questionId: question.id, choiceId: id })} />
-                      <span>{label}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-              {selected && (
-                <p className={`feedback ${selected === question.correct ? "" : "warning"}`} role="status">
-                  {selected === question.correct ? `좋은 생각이에요. ${question.explanation}` : "한 번 더 생각해 보세요. 십 묶음과 낱개를 다시 살펴보고 다른 답을 골라도 괜찮아요."}
-                </p>
-              )}
-            </section>
-          );
-        })}
-      </div>
+      <details className="reflection-panel">
+        <summary>생각 정리 3개</summary>
+        <p>더 생각해 보고 싶을 때 한 문제씩 골라 보세요.</p>
+        <div className="summary-questions">
+          {questions.map((question, index) => {
+            const selected = state.summaryAnswers[question.id];
+            return (
+              <section className="summary-question" key={question.id}>
+                <p className="step-label">생각 정리 {index + 1}</p>
+                <fieldset className="choice-fieldset">
+                  <legend>{question.prompt}</legend>
+                  <div className="choice-list">
+                    {question.choices.map(([id, label]) => (
+                      <label key={id} className={`choice-card ${selected === id ? "selected" : ""}`}>
+                        <input type="radio" name={question.id} checked={selected === id} onChange={() => dispatch({ type: "ANSWER_SUMMARY", questionId: question.id, choiceId: id })} />
+                        <span>{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+                {selected && (
+                  <p className={`feedback ${selected === question.correct ? "" : "warning"}`} role="status">
+                    {selected === question.correct ? `좋은 생각이에요. ${question.explanation}` : "한 번 더 생각해 보세요. 십 묶음과 낱개를 다시 살펴보고 다른 답을 골라도 괜찮아요."}
+                  </p>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      </details>
       <details className="bonus-panel">
         <summary>보너스 연습 3개</summary>
-        <p>점수 없이 다른 수도 십 묶음과 낱개로 나타내 보세요.</p>
+        <p>점수 없이 다른 수도 십 묶음과 낱개로 나타내 보세요. 모양이 달라도 계산 결과가 같으면 맞는 표현이에요.</p>
         <div className="bonus-grid">
           {bonusQuestions.map((question) => {
             const selected = state.bonusAnswers[question.id];
+            const result = selected ? evaluateBonusAnswer(question.total, selected, question.correct) : null;
             return (
               <fieldset className="bonus-question" key={question.id}>
                 <legend>{question.prompt}</legend>
@@ -111,7 +117,7 @@ export function SummaryScreen({ state, dispatch, onOpenReset }: {
                     <span>{label}</span>
                   </label>
                 ))}
-                {selected && <p className={selected === question.correct ? "bonus-correct" : "bonus-retry"} role="status">{selected === question.correct ? `${question.total}개를 정확히 나타냈어요.` : "묶음 수에 10을 곱한 뒤 낱개를 더해 보세요."}</p>}
+                {result && <p className={result.isCorrect ? "bonus-correct" : "bonus-retry"} role="status">{result.message}</p>}
               </fieldset>
             );
           })}

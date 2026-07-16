@@ -76,7 +76,7 @@ export const missions: readonly Mission[] = [
     goal: { bundles: 4, loose: 2 },
     requiredActions: [],
     checks: [
-      { kind: "quantity", prompt: "42와 24의 순서를 살펴보고 수량을 써 보세요." },
+      { kind: "quantity", prompt: "십 묶음 4개와 낱개 2개를 보고, 모두 몇 개인지 써 보세요." },
       { kind: "place", prompt: "십 묶음 4개는 몇 개일까요?", options: [4, 24, 40], answer: 40 },
     ],
     completion: "십 묶음 4개는 40개이고 낱개 2개를 더하면 42개예요.",
